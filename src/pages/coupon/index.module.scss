@@ -1,0 +1,25 @@
+.nav {
+  position: fixed;
+  width: 100%;
+  display: flex;
+  z-index: 100;
+  .nav_list {
+    flex: 1;
+    height: 84px;
+    line-height: 84px;
+    font-size: 32px;
+    text-align: center;
+    background-color: white;
+  }
+  .nav_active {
+    color: rgb(221, 118, 0);
+  }
+}
+.coupon_box {
+  position: relative;
+  top: 104px;
+  padding-bottom: 10px;
+  .box {
+    padding: 0 20px;
+  }
+}

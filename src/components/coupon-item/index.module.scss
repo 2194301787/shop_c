@@ -1,0 +1,49 @@
+.coupon {
+  display: flex;
+  border-radius: 20px;
+  background-color: white;
+  margin-bottom: 20px;
+  overflow: hidden;
+  .unit {
+    position: relative;
+    font-size: 28px;
+    top: 4px;
+  }
+  .discount {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 200px;
+    background-color: rgb(250, 65, 81);
+    color: white;
+  }
+  .detail {
+    display: flex;
+    flex: 1;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    .info {
+      display: flex;
+      flex-direction: column;
+      .text {
+        width: 340px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        word-break: break-all;
+        font-size: 26px;
+      }
+      .textTime {
+        font-size: 24px;
+      }
+    }
+    .btn {
+      font-size: 30px;
+      padding: 6px 20px;
+      background-color: rgb(255, 227, 0);
+      color: rgb(219, 55, 69);
+      border-radius: 10px;
+    }
+  }
+}

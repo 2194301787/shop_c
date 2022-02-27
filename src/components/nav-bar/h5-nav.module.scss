@@ -1,0 +1,23 @@
+.nav_header {
+  position: sticky;
+  height: 88px;
+  top: 0px;
+  background-color: white;
+  border-bottom: 2px solid rgb(235, 235, 235);
+  box-sizing: border-box;
+  z-index: 999;
+  .arrow {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    left: 20px;
+    top: 12px;
+  }
+  .title {
+    position: relative;
+    line-height: 88px;
+    color: #333;
+    font-size: 38px;
+    z-index: 100;
+  }
+}

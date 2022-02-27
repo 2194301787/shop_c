@@ -1,0 +1,100 @@
+.swiper_box {
+  height: 600px;
+  .swiper_img {
+    width: 100%;
+    height: 100%;
+  }
+}
+.shop_box {
+  padding: 0 20px;
+  padding-top: 20px;
+  .shop_inner {
+    background-color: white;
+    padding: 20px;
+    border-radius: 20px;
+    .name {
+      font-size: 40px;
+      font-weight: 700;
+    }
+    .price {
+      font-size: 34px;
+      color: red;
+    }
+    .store {
+      display: flex;
+      .store_img {
+        width: 100px;
+        height: 100px;
+        border-radius: 10px;
+        overflow: hidden;
+      }
+      .store_name {
+        margin-left: 20px;
+        font-size: 34px;
+        font-weight: 700;
+      }
+    }
+  }
+}
+
+.detail {
+  margin-top: 20px;
+  background-color: white;
+  .title {
+    text-align: center;
+    font-size: 38px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    margin-bottom: 10px;
+    border-bottom: 2px solid rgb(231, 231, 231);
+  }
+  .detail_render {
+    display: block;
+    padding-bottom: 80px;
+  }
+}
+
+.shop_footer {
+  position: fixed;
+  display: flex;
+  width: 100%;
+  height: 100px;
+  align-items: center;
+  justify-content: space-between;
+  bottom: 0;
+  background-color: white;
+  padding: 0 20px;
+  border-top: 2px solid rgb(231, 231, 231);
+  box-sizing: border-box;
+  z-index: 1000;
+  .icon {
+    width: 50px;
+    height: 50px;
+    .icon_img {
+      display: block;
+    }
+  }
+  .btn {
+    display: flex;
+    .add,
+    .buy {
+      width: 200px;
+      height: 60px;
+      text-align: center;
+      line-height: 60px;
+      padding: 8px 20px;
+      font-size: 30px;
+      color: white;
+    }
+    .add {
+      background-color: rgb(255, 123, 0);
+      border-top-left-radius: 50px;
+      border-bottom-left-radius: 50px;
+    }
+    .buy {
+      background-color: rgba(223, 0, 0, 0.932);
+      border-top-right-radius: 50px;
+      border-bottom-right-radius: 50px;
+    }
+  }
+}

@@ -1,0 +1,18 @@
+.page {
+  .login {
+    width: 90%;
+    margin: 0 auto;
+    margin-top: 200px;
+    padding: 30px;
+    background-color: white;
+    box-sizing: border-box;
+    .login_input {
+      font-size: 40px;
+      border-bottom: 2px solid rgb(211, 211, 211);
+      margin-bottom: 20px;
+    }
+    .btn {
+      margin-top: 40px;
+    }
+  }
+}

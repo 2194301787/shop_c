@@ -1,0 +1,53 @@
+.address {
+  padding: 0 20px;
+  .list {
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 20px;
+    background-color: white;
+    .list_detail {
+      padding-bottom: 20px;
+      border-bottom: 2px solid rgb(219, 219, 219);
+      .top {
+        display: flex;
+        align-items: center;
+        .name {
+          font-size: 36px;
+          font-weight: 700;
+        }
+        .phone {
+          margin-left: 14px;
+          font-size: 24px;
+          color: rgb(201, 201, 201);
+        }
+      }
+      .content {
+        font-size: 30px;
+      }
+    }
+    .handle {
+      display: flex;
+      justify-content: space-between;
+      padding-top: 20px;
+      .del {
+        font-size: 30px;
+      }
+    }
+  }
+}
+.footer {
+  position: fixed;
+  display: flex;
+  width: 100%;
+  height: 120px;
+  justify-content: center;
+  align-items: center;
+  left: 0;
+  bottom: 0;
+  background-color: white;
+  .btn {
+    width: 90%;
+    font-size: 34px;
+    border-radius: 40px;
+  }
+}

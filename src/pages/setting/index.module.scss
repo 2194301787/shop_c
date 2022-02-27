@@ -1,0 +1,31 @@
+.set_box {
+  margin-top: 20px;
+  .user_box {
+    display: flex;
+    .avatar {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+    }
+    .user_info {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      margin-left: 10px;
+      .user_name {
+        font-size: 44px;
+      }
+      .level {
+        font-size: 30px;
+        margin-top: 6px;
+        color: rgb(173, 173, 173);
+      }
+    }
+  }
+}
+.btn {
+  margin-top: 20px;
+  .logout {
+    background-color: white;
+  }
+}

@@ -1,0 +1,18 @@
+.myAddress {
+  margin-top: 20px;
+}
+.is_default {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background-color: white;
+  margin-top: 20px;
+  .text {
+    font-size: 36px;
+  }
+}
+.btn {
+  margin-top: 40px;
+  padding: 0 20px;
+}

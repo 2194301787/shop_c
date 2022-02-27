@@ -1,0 +1,22 @@
+.check {
+  display: flex;
+  align-items: center;
+  .check_box {
+    display: flex;
+    width: 40px;
+    height: 40px;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid rgb(158, 158, 158);
+    border-radius: 50%;
+    .check_inner {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+    }
+  }
+  .title {
+    font-size: 36px;
+    margin-left: 20px;
+  }
+}

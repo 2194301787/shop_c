@@ -1,0 +1,27 @@
+.nav_box {
+  position: relative;
+  display: flex;
+  height: 68px;
+  flex-wrap: wrap;
+  align-items: center;
+  background-color: white;
+  .nav_item {
+    font-size: 34px;
+    width: 108px;
+    text-align: center;
+    color: #333;
+  }
+  .nav_active {
+    font-size: 36px;
+    font-weight: 700;
+  }
+  .nav_border {
+    position: absolute;
+    width: 68px;
+    height: 4px;
+    left: 20px;
+    transition: 0.5s left;
+    background-color: #333;
+    bottom: 0;
+  }
+}

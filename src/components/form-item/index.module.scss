@@ -1,0 +1,21 @@
+.form_item {
+  padding-left: 20px;
+  background-color: white;
+  .item_inner {
+    display: flex;
+    align-items: center;
+    border-bottom: 2px solid rgb(199, 199, 199);
+    padding: 20px 20px 20px 0;
+    .label {
+      font-size: 34px;
+    }
+    .slot {
+      display: flex;
+      align-items: center;
+      flex: 1;
+      .slot_text {
+        font-size: 34px;
+      }
+    }
+  }
+}

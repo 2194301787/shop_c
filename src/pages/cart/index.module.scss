@@ -1,0 +1,133 @@
+.page {
+  .nav {
+    position: sticky;
+    display: flex;
+    height: 100px;
+    padding: 0 20px;
+    background-color: white;
+    align-items: center;
+    justify-content: space-between;
+    top: 0px;
+    font-size: 36px;
+    z-index: 1000;
+  }
+  .card_box {
+    padding: 0 20px;
+    padding-bottom: 140px;
+    .card_inner {
+      padding: 20px;
+      background-color: white;
+      border-radius: 20px;
+      margin-top: 20px;
+      .store {
+        display: flex;
+        align-items: center;
+        .store_bg {
+          display: block;
+          width: 44px;
+          height: 44px;
+          margin-left: 20px;
+          margin-right: 10px;
+          border-radius: 4px;
+        }
+        .store_name {
+          font-size: 36px;
+          font-weight: 700;
+        }
+      }
+      .shop {
+        display: flex;
+        align-items: center;
+        border-bottom: 2px solid rgb(218, 218, 218);
+        margin-top: 20px;
+        padding-bottom: 20px;
+        .shop_bg {
+          display: block;
+          width: 200px;
+          height: 200px;
+          margin-left: 20px;
+          border-radius: 20px;
+        }
+        .shop_detail {
+          display: flex;
+          flex: 1;
+          height: 200px;
+          padding-left: 20px;
+          flex-direction: column;
+          justify-content: space-between;
+          .shop_msg {
+            .shop_title {
+              font-size: 34px;
+            }
+            .count {
+              font-size: 24px;
+            }
+          }
+          .shop_footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            .price {
+              font-size: 34px;
+              color: red;
+            }
+            .buy_number {
+              width: 100px;
+              text-align: center;
+              font-size: 40px;
+              border: 2px solid;
+              border-radius: 10px;
+            }
+          }
+        }
+      }
+      .shop:last-child {
+        border-bottom: none;
+      }
+    }
+  }
+  .card_footer {
+    position: fixed;
+    display: flex;
+    width: 100%;
+    height: 120px;
+    align-items: center;
+    justify-content: space-between;
+    left: 0;
+    bottom: 100px;
+    padding: 0 20px;
+    background-color: white;
+    box-sizing: border-box;
+    .select {
+      font-size: 36px;
+    }
+    .card_buy {
+      display: flex;
+      align-items: center;
+      .count {
+        display: flex;
+        align-items: center;
+        margin-right: 20px;
+        .label {
+          font-size: 36px;
+        }
+        .price {
+          font-size: 34px;
+          color: red;
+        }
+      }
+      .submit_buy {
+        width: 140px;
+        padding: 0;
+        height: 80px;
+        background-color: rgb(255, 94, 0);
+        color: white;
+        font-size: 34px;
+        line-height: 80px;
+      }
+      .del_shop {
+        background-color: #e64340;
+      }
+    }
+  }
+}
