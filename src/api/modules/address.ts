@@ -27,3 +27,7 @@ export const findAllAddress = (data = undefined) => {
 export const findAddress = data => {
   return request.Get('/address/findAddress', data)
 }
+
+export const defaultAddress = (data = undefined) => {
+  return request.Get('/address/defaultAddress', data)
+}

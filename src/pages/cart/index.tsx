@@ -1,4 +1,4 @@
-import { FC, useState, useEffect } from 'react'
+import { FC, useState, useEffect, forwardRef } from 'react'
 import { useDidShow, showToast, navigateTo, showModal, useReady } from '@tarojs/taro'
 import { View, Image, Input, Button, Block } from '@tarojs/components'
 import { findAllShopCard, delShopCard as delShopCardApi } from '@/api/modules/shop'
@@ -7,6 +7,7 @@ import ShopRadio from '@/components/shop-radio'
 import { toFiexd } from '@/utils'
 import event from '@/utils/event'
 import { eventBusEnum } from '@/constant'
+import { inject, observer } from 'mobx-react'
 
 import styles from './index.module.scss'
 
@@ -14,7 +15,7 @@ type PageStateProps = {
   store: any
 }
 
-const Index: FC<PageStateProps> = () => {
+const Index: FC<PageStateProps> = forwardRef((props, _ref) => {
   const [cardList, setcardList] = useState<any[]>([])
   const [allNum, setAllNum] = useState(0)
   const [checkAll, setCheckAll] = useState(false)
@@ -23,7 +24,7 @@ const Index: FC<PageStateProps> = () => {
   const [isLogin, setIsLogin] = useState(true)
 
   useReady(() => {
-    event.once(eventBusEnum.initData, () => {
+    event.once(eventBusEnum.cartInit, () => {
       setIsLogin(false)
     })
   })
@@ -60,8 +61,55 @@ const Index: FC<PageStateProps> = () => {
   }, [isHandle])
 
   useEffect(() => {
-    countPrice(cardList)
-  }, [cardList])
+    if (!isHandle) {
+      countPrice(cardList)
+    }
+  }, [cardList, isHandle])
+
+  const onBuy = () => {
+    if (allPrice <= 0) {
+      showToast({
+        icon: 'none',
+        title: '请选择',
+      })
+      return
+    }
+    const cards: any[] = JSON.parse(JSON.stringify(cardList))
+    const list: any[] = []
+    let num = 0
+    cards.forEach(item => {
+      const itemList = item.shopList.filter(citem => {
+        return citem._isCheck
+      })
+      if (itemList.length > 0) {
+        num += itemList.length
+        delete item._isCheck
+        list.push({
+          ...item,
+          shopList: itemList.map(sItem => {
+            delete sItem._isCheck
+            delete sItem._inpEL
+            return sItem
+          }),
+        })
+      }
+    })
+    if (list.length <= 0) {
+      showToast({
+        icon: 'none',
+        title: '请选择',
+      })
+      return
+    }
+    props.store.config.setBuyCardList({
+      price: allPrice,
+      list,
+      num,
+    })
+    navigateTo({
+      url: 'pages/confirm-order/index',
+    })
+  }
 
   const countPrice = list => {
     let price = 0
@@ -218,22 +266,20 @@ const Index: FC<PageStateProps> = () => {
   }
 
   const inputBlur = (index, cindex) => {
-    setTimeout(() => {
-      const now = Number(cardList[index].shopList[cindex].cardBuyCount)
-      const max = cardList[index].shopList[cindex].shopCount
-      setcardList(list => {
-        const result: any[] = Object.assign([], list)
-        if (now > max) {
-          result[index].shopList[cindex].cardBuyCount = max
-        } else if (now <= 1 && max >= 1) {
-          result[index].shopList[cindex].cardBuyCount = 1
-        } else if (now < 1 && max <= 0) {
-          result[index].shopList[cindex].cardBuyCount = 0
-        }
-        result[index].shopList[cindex]._inpEL = false
-        return result
-      })
-    }, 100)
+    const now = Number(cardList[index].shopList[cindex].cardBuyCount)
+    const max = cardList[index].shopList[cindex].shopCount
+    setcardList(list => {
+      const result: any[] = Object.assign([], list)
+      if (now > max) {
+        result[index].shopList[cindex].cardBuyCount = max
+      } else if (now <= 1 && max >= 1) {
+        result[index].shopList[cindex].cardBuyCount = 1
+      } else if (now < 1 && max <= 0) {
+        result[index].shopList[cindex].cardBuyCount = 0
+      }
+      result[index].shopList[cindex]._inpEL = false
+      return result
+    })
   }
 
   const delShopCard = async () => {
@@ -364,13 +410,15 @@ const Index: FC<PageStateProps> = () => {
                 <View className={styles.label}>合计：</View>
                 <View className={styles.price}>￥{allPrice}</View>
               </View>
-              <Button className={styles.submit_buy}>结算</Button>
+              <Button onClick={onBuy} className={styles.submit_buy}>
+                结算
+              </Button>
             </Block>
           )}
         </View>
       </View>
     </View>
   )
-}
+})
 
-export default Index
+export default inject('store')(observer(Index))

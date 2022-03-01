@@ -17,10 +17,10 @@ const Index: FC<PageStateProps> = forwardRef((props, _ref) => {
 
   const reflash = () => {
     const some = Object.keys(event.callbacks).some(item => {
-      return item === eventBusEnum.initData
+      return item === eventBusEnum.cartInit
     })
     if (some) {
-      event.trigger(eventBusEnum.initData)
+      event.trigger(eventBusEnum.cartInit)
     }
   }
 

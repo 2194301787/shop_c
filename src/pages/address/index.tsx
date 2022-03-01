@@ -21,13 +21,13 @@ const Address: FC = () => {
 
   const addAddress = () => {
     Taro.navigateTo({
-      url: 'pages/myAddress/index',
+      url: 'pages/my-address/index',
     })
   }
 
   const gotoDetail = id => {
     Taro.navigateTo({
-      url: 'pages/myAddress/index?id=' + id,
+      url: 'pages/my-address/index?id=' + id,
     })
   }
 

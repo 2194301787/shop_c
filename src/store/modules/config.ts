@@ -6,7 +6,15 @@ import Taro from '@tarojs/taro'
 const config = observable({
   publicPem: Taro.getStorageSync('getPublicPem'),
   crypt: new JSEncrypt(),
+  buyCartList: {
+    price: 0,
+    list: [],
+    num: 0,
+  },
 
+  setBuyCardList(obj) {
+    this.buyCartList = obj
+  },
   async setPublicPem() {
     const { data } = (await getPublicPem()) as any
     this.publicPem = data

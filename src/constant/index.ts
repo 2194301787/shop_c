@@ -63,5 +63,7 @@ export enum couponRangeEnum {
 }
 
 export enum eventBusEnum {
+  cartInit = 'cartInit',
+  swapPage = 'swapPage',
   initData = 'initData',
 }
