@@ -35,7 +35,7 @@ const ShopRadio: FC<PageStatePorps> = props => {
 }
 
 ShopRadio.defaultProps = {
-  isCheck: true,
+  isCheck: false,
   changeCheck: () => {},
 }
 

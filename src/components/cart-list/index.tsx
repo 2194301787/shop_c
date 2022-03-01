@@ -2,20 +2,21 @@ import { View, Image } from '@tarojs/components'
 import { FC } from 'react'
 import { filePath } from '@/constant'
 import { toFiexd } from '@/utils'
+import { couponTypeEnum } from '@/constant'
 
 import styles from './index.module.scss'
 
 type PageStateProps = {
   cardList?: any[]
-  changeCoupon?: (item: any) => void
+  changeCoupon?: (id: string | number, item: any) => void
 }
 
 const CartList: FC<PageStateProps> = props => {
   const { cardList, changeCoupon } = props
 
-  const selectCoupon = (e, item) => {
+  const selectCoupon = (e, shopStoreId, item) => {
     e.stopPropagation()
-    changeCoupon && changeCoupon(item)
+    changeCoupon && changeCoupon(shopStoreId, item)
   }
 
   return (
@@ -44,11 +45,18 @@ const CartList: FC<PageStateProps> = props => {
                       <View className={styles.shop_content}>
                         <View className={styles.name}>{citem.name}</View>
                         {citem.couponList && citem.couponList.length > 0 ? (
-                          <View className={styles.coupon_name}></View>
+                          <View
+                            onClick={e => {
+                              selectCoupon(e, item.id, citem)
+                            }}
+                            className={styles.coupon_name}
+                          >
+                            优惠券：{citem.couponList.map(c => c.name).join(',')}
+                          </View>
                         ) : (
                           <View
                             onClick={e => {
-                              selectCoupon(e, citem)
+                              selectCoupon(e, item.id, citem)
                             }}
                             className={styles.tip}
                           >
@@ -59,6 +67,17 @@ const CartList: FC<PageStateProps> = props => {
                       <View className={styles.shop_tip}>
                         <View className={styles.price}>￥{toFiexd(citem.price).toFixed(2)}</View>
                         <View className={styles.count}>x{citem.cardBuyCount}</View>
+                        {citem.couponList && citem.couponList.length > 0
+                          ? citem.couponList.map(couponItem => {
+                              return (
+                                <View key={'coupon' + couponItem.id} className={styles.discount}>
+                                  {couponItem.couponType === couponTypeEnum.discount
+                                    ? `${couponItem.discount}折`
+                                    : `-￥${couponItem.discount.toFixed(2)}`}
+                                </View>
+                              )
+                            })
+                          : ''}
                       </View>
                     </View>
                   )

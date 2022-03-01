@@ -22,7 +22,7 @@ const TakeAddress: FC = () => {
   }
 
   const changeAddress = item => {
-    event.trigger(eventBusEnum.swapPage, item)
+    event.trigger(eventBusEnum.swapPage, 'address', item)
     Taro.navigateBack({
       delta: 1,
     })

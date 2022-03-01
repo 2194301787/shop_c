@@ -35,6 +35,9 @@
           .name {
             font-size: 34px;
           }
+          .coupon_name {
+            font-size: 30px;
+          }
           .tip {
             font-size: 28px;
             color: rgb(196, 196, 196);
@@ -49,6 +52,11 @@
             text-align: right;
             font-size: 24px;
             color: rgb(187, 187, 187);
+          }
+          .discount {
+            text-align: right;
+            font-size: 24px;
+            color: rgb(187, 0, 0);
           }
         }
       }

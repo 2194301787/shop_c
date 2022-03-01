@@ -2,6 +2,7 @@ import { View, Text, Block, ITouchEvent } from '@tarojs/components'
 import { FC } from 'react'
 import { couponRangeEnum, couponTypeEnum } from '@/constant'
 import { formartDate } from '@/utils'
+import ShopRadio from '../shop-radio'
 
 import styles from './index.module.scss'
 
@@ -49,9 +50,13 @@ const CouponItem: FC<pageStateProps> = props => {
             </Block>
           )}
         </View>
-        <View onClick={clickItem} className={styles.btn}>
-          {typeNum === 0 ? '领取' : typeNum === 1 ? '已领取' : '未知'}
-        </View>
+        {typeNum === 0 || typeNum === 1 ? (
+          <View onClick={clickItem} className={styles.btn}>
+            {typeNum === 0 ? '领取' : '已领取'}
+          </View>
+        ) : (
+          <ShopRadio isCheck={couponItem._isCheck} changeCheck={clickItem} />
+        )}
       </View>
     </View>
   )

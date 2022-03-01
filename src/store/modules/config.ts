@@ -11,7 +11,18 @@ const config = observable({
     list: [],
     num: 0,
   },
+  pageParams: {},
 
+  clearCartList() {
+    this.buyCartList = {
+      price: 0,
+      list: [],
+      num: 0,
+    }
+  },
+  setPageParams(obj) {
+    this.pageParams = obj
+  },
   setBuyCardList(obj) {
     this.buyCartList = obj
   },
