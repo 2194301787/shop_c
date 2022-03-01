@@ -13,6 +13,7 @@ type PageStateProps = {
 
 const co = {}
 const ro = {}
+let isFrist = true
 
 const AddressPicker: FC<PageStateProps> = forwardRef((props, ref) => {
   const { defaultValue, pickerSlot, onChangeArea, pickerName } = props
@@ -72,36 +73,40 @@ const AddressPicker: FC<PageStateProps> = forwardRef((props, ref) => {
             rs = item.value
             defaultList[1] = ci
           }
-          if (!co[item.value]) {
-            co[item.value] = [
-              {
+          if (isFrist) {
+            if (!co[item.value]) {
+              co[item.value] = [
+                {
+                  value: citem.value,
+                  label: citem.label,
+                },
+              ]
+            } else {
+              co[item.value].push({
                 value: citem.value,
                 label: citem.label,
-              },
-            ]
-          } else {
-            co[item.value].push({
-              value: citem.value,
-              label: citem.label,
-            })
+              })
+            }
           }
           if (citem.children) {
             citem.children.forEach((ritem, ri) => {
               if (defaultValue[2] && ritem.label === defaultValue[2]) {
                 defaultList[2] = ri
               }
-              if (!ro[citem.value]) {
-                ro[citem.value] = [
-                  {
+              if (isFrist) {
+                if (!ro[citem.value]) {
+                  ro[citem.value] = [
+                    {
+                      value: ritem.value,
+                      label: ritem.label,
+                    },
+                  ]
+                } else {
+                  ro[citem.value].push({
                     value: ritem.value,
                     label: ritem.label,
-                  },
-                ]
-              } else {
-                ro[citem.value].push({
-                  value: ritem.value,
-                  label: ritem.label,
-                })
+                  })
+                }
               }
             })
           }
@@ -111,6 +116,7 @@ const AddressPicker: FC<PageStateProps> = forwardRef((props, ref) => {
     let c = cs ? co[cs] : areadata[0].children
     let r = rs ? ro[rs] : areadata[0].children[0].children
     result.push(p, c, r)
+    isFrist = false
     setPageValue(defaultList)
     setList(result)
   }
