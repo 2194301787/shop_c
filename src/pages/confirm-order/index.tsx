@@ -24,7 +24,7 @@ type PageStateProps = {
 }
 
 let couponObj: any = {}
-let selectIds: number[] = []
+let buyNow: Date | null = null
 
 const ConfirmOrder: FC<PageStateProps> = forwardRef((props, _ref) => {
   const [address, setAddress] = useState<any>(undefined)
@@ -43,11 +43,11 @@ const ConfirmOrder: FC<PageStateProps> = forwardRef((props, _ref) => {
         if (citem.realPrice) {
           count += citem.realPrice
         } else {
-          count += citem.price
+          count += citem.price * citem.cardBuyCount
         }
       })
     })
-    setRealPrice(count)
+    setRealPrice(toFiexd(count))
   }
 
   const toAddress = () => {
@@ -62,17 +62,20 @@ const ConfirmOrder: FC<PageStateProps> = forwardRef((props, _ref) => {
         setAddress(data)
       } else if (type === 'coupon') {
         const some = data.list.some(item => {
-          return selectIds.includes(item.id)
+          return Object.keys(couponObj).some(citem => {
+            return Number(citem) !== Number(data.shopId) && couponObj[citem].includes(item.couponId)
+          })
         })
         if (some) {
-          Taro.showToast({
-            icon: 'none',
-            title: '选择的优惠券有重复使用，请重新选择',
-          })
+          setTimeout(() => {
+            Taro.showToast({
+              icon: 'none',
+              title: '选择的优惠券有重复使用，请重新选择',
+            })
+          }, 200)
           return
         }
         couponObj[data.shopId] = data.list.map(item => item.couponId)
-        selectIds.concat(data.list.map(item => item.id))
         setCartList(val => {
           const result: any[] = Object.assign([], val)
           result.forEach(item => {
@@ -88,6 +91,7 @@ const ConfirmOrder: FC<PageStateProps> = forwardRef((props, _ref) => {
       }
     })
     initData()
+    buyNow = new Date()
   })
 
   const countPrice = (shopItem: any, couponList: any[], num: number): number => {
@@ -113,6 +117,7 @@ const ConfirmOrder: FC<PageStateProps> = forwardRef((props, _ref) => {
         const shopList = item.shopList.map(citem => {
           return {
             ...citem,
+            couponList: [],
           }
         })
         return {
@@ -129,10 +134,16 @@ const ConfirmOrder: FC<PageStateProps> = forwardRef((props, _ref) => {
   }
 
   const changeCoupon = (storeId, item) => {
+    const couponIds: any[] = []
+    Object.keys(couponObj).forEach(keys => {
+      if (Number(item.id) !== Number(keys)) {
+        couponIds.push(...couponObj[keys])
+      }
+    })
     const obj: any = {
       shopId: item.id,
       shopStoreId: storeId,
-      sids: selectIds,
+      sids: couponIds,
       max: item.cardBuyCount,
     }
     if (couponObj[item.id]) {
@@ -148,7 +159,7 @@ const ConfirmOrder: FC<PageStateProps> = forwardRef((props, _ref) => {
     props.store.config.setPageParams({})
     props.store.config.clearCartList()
     couponObj = {}
-    selectIds = []
+    buyNow = null
     event.off(eventBusEnum.swapPage)
   }
 
@@ -170,7 +181,7 @@ const ConfirmOrder: FC<PageStateProps> = forwardRef((props, _ref) => {
         >
           ￥{price.toFixed(2)}
         </View>
-        {realPrice !== price && realPrice !== 0 && <View className={styles.real_price}>￥{realPrice.toFixed(2)}</View>}
+        {realPrice !== price && realPrice !== 0 && <View className={styles.real_price}>{realPrice.toFixed(2)}</View>}
         <Button type="primary" className={styles.btn}>
           提交订单
         </Button>

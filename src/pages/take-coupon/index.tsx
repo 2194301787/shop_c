@@ -52,10 +52,17 @@ const TakeCoupon: FC<PageStateProps> = forwardRef((props, _ref) => {
   }
 
   const selectCoupon = (index: number) => {
-    if (sids.includes(list[index].couponId)) {
+    if (sids.includes(list[index].couponId) && !list[index]._isCheck) {
       Taro.showToast({
         icon: 'none',
         title: '该优惠券已选择',
+      })
+      return
+    }
+    if (list[index].couponId.startTime && new Date() < list[index].couponId.startTime) {
+      Taro.showToast({
+        icon: 'none',
+        title: '该优惠券活动时间还未开始',
       })
       return
     }
