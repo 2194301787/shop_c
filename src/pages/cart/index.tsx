@@ -38,11 +38,18 @@ const Index: FC<PageStateProps> = forwardRef((props, _ref) => {
       setcardList(list => {
         const result: any[] = Object.assign([], list)
         result.forEach(item => {
+          let count = 0
           item.shopList.forEach(citem => {
             if (citem.shopCount <= 0 && citem._isCheck) {
               citem._isCheck = false
             }
+            if (citem.shopCount > 0) {
+              count++
+            }
           })
+          if (count <= 0 && item._isCheck) {
+            item._isCheck = false
+          }
         })
         return result
       })
@@ -82,11 +89,11 @@ const Index: FC<PageStateProps> = forwardRef((props, _ref) => {
         return citem._isCheck
       })
       if (itemList.length > 0) {
-        num += itemList.length
         delete item._isCheck
         list.push({
           ...item,
           shopList: itemList.map(sItem => {
+            num += sItem.cardBuyCount
             delete sItem._isCheck
             delete sItem._inpEL
             return sItem
@@ -150,7 +157,8 @@ const Index: FC<PageStateProps> = forwardRef((props, _ref) => {
             cardList[index].shopList[cindex].cardId === citem.cardId
           ) {
             citem._isCheck = cardList[index].shopList[cindex]._isCheck
-            citem.cardBuyCount = cardList[index].shopList[cindex].cardBuyCount
+            const n = cardList[index].shopList[cindex].cardBuyCount
+            citem.cardBuyCount = citem.shopCount >= n ? n : citem.shopCount
           }
         })
         return {
@@ -193,13 +201,22 @@ const Index: FC<PageStateProps> = forwardRef((props, _ref) => {
   }
 
   const checkAllStore = (list, index) => {
-    return list[index].shopList.some(item => {
+    let count = 0
+    const some = list[index].shopList.some(item => {
       if (isHandle) {
         return !item._isCheck
       } else {
+        if (item.shopCount > 0) {
+          count++
+        }
         return !item._isCheck && item.shopCount > 0
       }
     })
+    if (!isHandle && count <= 0) {
+      return true
+    } else {
+      return some
+    }
   }
 
   const checkStore = index => {
@@ -231,13 +248,19 @@ const Index: FC<PageStateProps> = forwardRef((props, _ref) => {
   const checkAllItem = () => {
     setcardList(list => {
       const result = list.map(item => {
+        let count = 0
         item.shopList = item.shopList.map(citem => {
           if (citem.shopCount > 0 || isHandle) {
+            if (citem.shopCount > 0) {
+              count++
+            }
             citem._isCheck = !checkAll
           }
           return citem
         })
-        item._isCheck = !checkAll
+        if (isHandle || count > 0) {
+          item._isCheck = !checkAll
+        }
         return item
       })
       return result

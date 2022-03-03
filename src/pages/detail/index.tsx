@@ -1,10 +1,11 @@
-import { FC, useState } from 'react'
+import { FC, useState, forwardRef } from 'react'
 import { View, Swiper, SwiperItem, Image, RichText } from '@tarojs/components'
-import { showModal, useRouter, useReady, showToast } from '@tarojs/taro'
+import { showModal, useRouter, useReady, showToast, navigateTo } from '@tarojs/taro'
 import H5Nav from '@/components/nav-bar/h5-nav'
 import { getShop } from '@/api/modules/shop'
 import { filePath } from '@/constant'
 import { createShopCard } from '@/api/modules/shop'
+import { inject, observer } from 'mobx-react'
 
 import buyIcon from '@/assets/images/icon_buy.png'
 
@@ -12,9 +13,12 @@ import styles from './index.module.scss'
 
 type PageStateProps = {
   store: any
+  config: {
+    setBuyCardList: (obj: any) => void
+  }
 }
 
-const Detail: FC<PageStateProps> = () => {
+const Detail: FC<PageStateProps> = forwardRef((props, _ref) => {
   const {
     params: { id },
   } = useRouter()
@@ -25,6 +29,53 @@ const Detail: FC<PageStateProps> = () => {
   useReady(() => {
     initData()
   })
+
+  const submit = () => {
+    if (shopItem.shopCount <= 0) {
+      showToast({
+        icon: 'none',
+        title: '商品库存不足',
+      })
+      return
+    }
+    props.store.config.setBuyCardList({
+      price: shopItem.price,
+      list: [
+        {
+          ...handleObj(shopItem.shopStore, ['id', 'name', 'avatar']),
+          shopList: [
+            {
+              ...handleObj(shopItem, [
+                'id',
+                'name',
+                'price',
+                'shopType',
+                'shopCount',
+                'buyCount',
+                'avatar',
+                'updatedAt',
+              ]),
+              cardBuyCount: 1,
+            },
+          ],
+        },
+      ],
+      num: 1,
+    })
+    navigateTo({
+      url: 'pages/confirm-order/index',
+    })
+  }
+
+  const handleObj = (obj: any, typeList: string[]) => {
+    const result: any = {}
+    Object.keys(obj).forEach(item => {
+      if (typeList.includes(item)) {
+        result[item] = obj[item]
+      }
+    })
+    return result
+  }
 
   const initData = async () => {
     const { data } = (await getShop({
@@ -110,11 +161,13 @@ const Detail: FC<PageStateProps> = () => {
           <View onClick={addCard} className={styles.add}>
             加入购物车
           </View>
-          <View className={styles.buy}>立即购买</View>
+          <View onClick={submit} className={styles.buy}>
+            立即购买
+          </View>
         </View>
       </View>
     </View>
   )
-}
+})
 
-export default Detail
+export default inject('store')(observer(Detail))

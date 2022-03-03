@@ -1,5 +1,5 @@
 import { Button, View } from '@tarojs/components'
-import { FC, forwardRef, useState, useEffect } from 'react'
+import { FC, forwardRef, useState, useEffect, useRef } from 'react'
 import AddressItem from '@/components/address-item'
 import { inject, observer } from 'mobx-react'
 import H5Nav from '@/components/nav-bar/h5-nav'
@@ -9,7 +9,9 @@ import Taro from '@tarojs/taro'
 import { eventBusEnum, couponTypeEnum } from '@/constant'
 import { defaultAddress } from '@/api/modules/address'
 import CartList from '@/components/cart-list'
-import { toFiexd } from '@/utils'
+import { toFiexd, isEmpty } from '@/utils'
+import Dialog from '@/components/dialog'
+import { createOrder, payOrder } from '@/api/modules/order'
 
 import styles from './index.module.scss'
 
@@ -25,16 +27,66 @@ type PageStateProps = {
 
 let couponObj: any = {}
 let buyNow: Date | null = null
+let orderId: number | undefined = undefined
 
 const ConfirmOrder: FC<PageStateProps> = forwardRef((props, _ref) => {
   const [address, setAddress] = useState<any>(undefined)
   const [cartList, setCartList] = useState<any[]>([])
   const [realPrice, setRealPrice] = useState(0)
   const { price, num } = props.store.config.buyCartList
+  const maskRef = useRef<any>(null)
 
   useEffect(() => {
     countRealPrice()
   }, [cartList])
+
+  const submitCreate = async () => {
+    if (isEmpty(address)) {
+      Taro.showToast({
+        icon: 'none',
+        title: '请选择地址',
+      })
+      return
+    }
+    try {
+      const { data } = await createOrder({
+        shopList: cartList,
+        addressId: address.id,
+        price,
+        realPrice,
+        buyNow,
+        buyCount: num,
+      })
+      orderId = data
+      maskRef.current.open()
+    } catch (error) {
+      Taro.showToast({
+        icon: 'none',
+        title: error,
+      })
+    }
+  }
+
+  const paySubmit = async () => {
+    try {
+      await payOrder({
+        orderId,
+      })
+      Taro.showToast({
+        icon: 'none',
+        title: '支付成功',
+      })
+      backPage()
+      Taro.navigateBack({
+        delta: 1,
+      })
+    } catch (error) {
+      Taro.showToast({
+        icon: 'none',
+        title: error,
+      })
+    }
+  }
 
   const countRealPrice = () => {
     let count = 0
@@ -158,6 +210,7 @@ const ConfirmOrder: FC<PageStateProps> = forwardRef((props, _ref) => {
   const backPage = () => {
     props.store.config.setPageParams({})
     props.store.config.clearCartList()
+    orderId = undefined
     couponObj = {}
     buyNow = null
     event.off(eventBusEnum.swapPage)
@@ -182,10 +235,23 @@ const ConfirmOrder: FC<PageStateProps> = forwardRef((props, _ref) => {
           ￥{price.toFixed(2)}
         </View>
         {realPrice !== price && realPrice !== 0 && <View className={styles.real_price}>{realPrice.toFixed(2)}</View>}
-        <Button type="primary" className={styles.btn}>
+        <Button onClick={submitCreate} type="primary" className={styles.btn}>
           提交订单
         </Button>
       </View>
+      <Dialog
+        maskWidth="70%"
+        title="微信支付"
+        ref={maskRef}
+        maskSlot={
+          <View className={styles.pay_content}>
+            <View className={styles.price}>￥{realPrice.toFixed(2)}</View>
+            <Button onClick={paySubmit} className={styles.btn} type="primary">
+              确定支付
+            </Button>
+          </View>
+        }
+      />
     </View>
   )
 })
