@@ -11,3 +11,9 @@ export const payOrder = data => {
     showLoading: true,
   })
 }
+
+export const findAllOrder = data => {
+  return request.Post('/order/findAllOrder', data, undefined, {
+    clearEmpty: true,
+  })
+}

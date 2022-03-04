@@ -52,6 +52,12 @@ const Index: FC<PageStateProps> = forwardRef((props, _ref) => {
     })
   }
 
+  const goOrder = (status: number | string = '') => {
+    Taro.navigateTo({
+      url: 'pages/order-list/index?status=' + status,
+    })
+  }
+
   return (
     <View className={'container ' + styles.page}>
       <View className={styles.user_box}>
@@ -80,7 +86,12 @@ const Index: FC<PageStateProps> = forwardRef((props, _ref) => {
         <Block>
           <View className={styles.order}>
             <View className={styles.order_inner}>
-              <View className={styles.header}>
+              <View
+                onClick={() => {
+                  goOrder()
+                }}
+                className={styles.header}
+              >
                 <View className={styles.title}>我的订单</View>
                 <View className={styles.nav}>
                   <View className={styles.text}>全部</View>
@@ -92,7 +103,13 @@ const Index: FC<PageStateProps> = forwardRef((props, _ref) => {
               <View className={styles.list}>
                 {orderList.map(item => {
                   return (
-                    <View key={item.value} className={styles.list_render}>
+                    <View
+                      onClick={() => {
+                        goOrder(item.value)
+                      }}
+                      key={item.value}
+                      className={styles.list_render}
+                    >
                       <View className={styles.list_icon}>
                         <Image className={styles.icon_img} src={orderIconList[item.value]} />
                       </View>

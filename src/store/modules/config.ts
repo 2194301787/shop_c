@@ -6,6 +6,7 @@ import Taro from '@tarojs/taro'
 const config = observable({
   publicPem: Taro.getStorageSync('getPublicPem'),
   crypt: new JSEncrypt(),
+  navH: 44,
   buyCartList: {
     price: 0,
     list: [],

@@ -13,6 +13,8 @@ export default defineAppConfig({
     'pages/confirm-order/index',
     'pages/take-address/index',
     'pages/take-coupon/index',
+    'pages/order-list/index',
+    'pages/order-detail/index',
   ],
   window: {
     backgroundTextStyle: 'light',

@@ -25,16 +25,15 @@ type PageStateProps = {
   }
 }
 
-let couponObj: any = {}
-let buyNow: Date | null = null
-let orderId: number | undefined = undefined
-
 const ConfirmOrder: FC<PageStateProps> = forwardRef((props, _ref) => {
   const [address, setAddress] = useState<any>(undefined)
   const [cartList, setCartList] = useState<any[]>([])
   const [realPrice, setRealPrice] = useState(0)
   const { price, num } = props.store.config.buyCartList
   const maskRef = useRef<any>(null)
+  const couponObj = useRef<any>({})
+  const buyNow = useRef<Date>(new Date())
+  const orderId = useRef<number | undefined>(undefined)
 
   useEffect(() => {
     countRealPrice()
@@ -54,10 +53,10 @@ const ConfirmOrder: FC<PageStateProps> = forwardRef((props, _ref) => {
         addressId: address.id,
         price,
         realPrice,
-        buyNow,
+        buyNow: buyNow.current,
         buyCount: num,
       })
-      orderId = data
+      orderId.current = data
       maskRef.current.open()
     } catch (error) {
       Taro.showToast({
@@ -70,7 +69,7 @@ const ConfirmOrder: FC<PageStateProps> = forwardRef((props, _ref) => {
   const paySubmit = async () => {
     try {
       await payOrder({
-        orderId,
+        orderId: orderId.current,
       })
       Taro.showToast({
         icon: 'none',
@@ -114,8 +113,8 @@ const ConfirmOrder: FC<PageStateProps> = forwardRef((props, _ref) => {
         setAddress(data)
       } else if (type === 'coupon') {
         const some = data.list.some(item => {
-          return Object.keys(couponObj).some(citem => {
-            return Number(citem) !== Number(data.shopId) && couponObj[citem].includes(item.couponId)
+          return Object.keys(couponObj.current).some(citem => {
+            return Number(citem) !== Number(data.shopId) && couponObj.current[citem].includes(item.couponId)
           })
         })
         if (some) {
@@ -127,7 +126,7 @@ const ConfirmOrder: FC<PageStateProps> = forwardRef((props, _ref) => {
           }, 200)
           return
         }
-        couponObj[data.shopId] = data.list.map(item => item.couponId)
+        couponObj.current[data.shopId] = data.list.map(item => item.couponId)
         setCartList(val => {
           const result: any[] = Object.assign([], val)
           result.forEach(item => {
@@ -143,7 +142,6 @@ const ConfirmOrder: FC<PageStateProps> = forwardRef((props, _ref) => {
       }
     })
     initData()
-    buyNow = new Date()
   })
 
   const countPrice = (shopItem: any, couponList: any[], num: number): number => {
@@ -187,9 +185,9 @@ const ConfirmOrder: FC<PageStateProps> = forwardRef((props, _ref) => {
 
   const changeCoupon = (storeId, item) => {
     const couponIds: any[] = []
-    Object.keys(couponObj).forEach(keys => {
+    Object.keys(couponObj.current).forEach(keys => {
       if (Number(item.id) !== Number(keys)) {
-        couponIds.push(...couponObj[keys])
+        couponIds.push(...couponObj.current[keys])
       }
     })
     const obj: any = {
@@ -198,8 +196,8 @@ const ConfirmOrder: FC<PageStateProps> = forwardRef((props, _ref) => {
       sids: couponIds,
       max: item.cardBuyCount,
     }
-    if (couponObj[item.id]) {
-      obj.ids = couponObj[item.id]
+    if (couponObj.current[item.id]) {
+      obj.ids = couponObj.current[item.id]
     }
     props.store.config.setPageParams(obj)
     Taro.navigateTo({
@@ -210,9 +208,6 @@ const ConfirmOrder: FC<PageStateProps> = forwardRef((props, _ref) => {
   const backPage = () => {
     props.store.config.setPageParams({})
     props.store.config.clearCartList()
-    orderId = undefined
-    couponObj = {}
-    buyNow = null
     event.off(eventBusEnum.swapPage)
   }
 

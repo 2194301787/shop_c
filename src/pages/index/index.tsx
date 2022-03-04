@@ -2,7 +2,7 @@ import { FC, useState, useRef, useEffect } from 'react'
 import { View, ScrollView, Image } from '@tarojs/components'
 import NavList from '@/components/navigation/nav-list'
 import { shopTypeMap, shopTypeList, filePath } from '@/constant'
-import { navigateTo } from '@tarojs/taro'
+import { navigateTo, pxTransform } from '@tarojs/taro'
 import { findTypeShop } from '@/api/modules/shop'
 import { sleep } from '@/utils'
 
@@ -82,7 +82,7 @@ const Index: FC = () => {
         <NavList ref={navRef} keyId="label" dataList={shopTypeMap} selectChange={selectChange} />
       </View>
       <ScrollView
-        style={{ height: 'calc(100% - 68px)%' }}
+        style={{ height: `calc(100% - ${pxTransform(68)})` }}
         className={styles.page_scorll}
         onScrollToLower={() => {
           onScrollToLower()
