@@ -1,7 +1,7 @@
 import { FC, forwardRef } from 'react'
 import { View, Image, Block } from '@tarojs/components'
 import { inject, observer } from 'mobx-react'
-import { filePath, orderType, orderList } from '@/constant'
+import { filePath, orderType, orderList, authorityEnum } from '@/constant'
 import Taro from '@tarojs/taro'
 
 import handleIcon from '@/assets/images/handle.png'
@@ -10,8 +10,9 @@ import unpaidIcon from '@/assets/images/unpaid.png'
 import unshipIcon from '@/assets/images/unship.png'
 import unreceiptIcon from '@/assets/images/unreceipt.png'
 import completedIcon from '@/assets/images/completed.png'
-import reimburseIcon from '@/assets/images/reimburse.png'
+// import reimburseIcon from '@/assets/images/reimburse.png'
 import couponIcon from '@/assets/images/coupon.png'
+import deliveryIcon from '@/assets/images/delivery.png'
 
 import styles from './index.module.scss'
 
@@ -24,7 +25,7 @@ const orderIconList = {
   [orderType.unship]: unshipIcon,
   [orderType.unreceipt]: unreceiptIcon,
   [orderType.completed]: completedIcon,
-  [orderType.reimburse]: reimburseIcon,
+  // [orderType.reimburse]: reimburseIcon,
 }
 
 const Index: FC<PageStateProps> = forwardRef((props, _ref) => {
@@ -33,6 +34,10 @@ const Index: FC<PageStateProps> = forwardRef((props, _ref) => {
       user: { userInfo },
     },
   } = props
+
+  Taro.useDidShow(() => {
+    props.store.user.setUserInfo()
+  })
 
   const goLogin = () => {
     Taro.navigateTo({
@@ -55,6 +60,12 @@ const Index: FC<PageStateProps> = forwardRef((props, _ref) => {
   const goOrder = (status: number | string = '') => {
     Taro.navigateTo({
       url: 'pages/order-list/index?status=' + status,
+    })
+  }
+
+  const gotoDelivery = () => {
+    Taro.navigateTo({
+      url: 'pages/delivery-order/index',
     })
   }
 
@@ -128,6 +139,14 @@ const Index: FC<PageStateProps> = forwardRef((props, _ref) => {
                 </View>
                 <View className={styles.text}>优惠券中心</View>
               </View>
+              {userInfo.permissionId === authorityEnum.delivery && (
+                <View onClick={gotoDelivery} className={styles.list}>
+                  <View className={styles.icon}>
+                    <Image className={styles.icon_img} src={deliveryIcon} />
+                  </View>
+                  <View className={styles.text}>配送中心</View>
+                </View>
+              )}
             </View>
           </View>
         </Block>

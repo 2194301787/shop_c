@@ -15,6 +15,8 @@ export default defineAppConfig({
     'pages/take-coupon/index',
     'pages/order-list/index',
     'pages/order-detail/index',
+    'pages/delivery-order/index',
+    'pages/delivery-detail/index',
   ],
   window: {
     backgroundTextStyle: 'light',

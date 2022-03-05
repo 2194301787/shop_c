@@ -17,7 +17,7 @@ export enum orderType {
   unship, // 待发货
   unreceipt, // 待收货
   completed, // 已完成
-  reimburse, // 退款/售后
+  // reimburse, // 退款/售后
 }
 
 export const orderMap = {
@@ -25,7 +25,7 @@ export const orderMap = {
   [orderType.unship]: '待发货',
   [orderType.unreceipt]: '待收货',
   [orderType.completed]: '已完成',
-  [orderType.reimburse]: '退款/售后',
+  // [orderType.reimburse]: '退款/售后',
 }
 
 export const orderList = [
@@ -45,10 +45,10 @@ export const orderList = [
     label: orderMap[orderType.completed],
     value: orderType.completed,
   },
-  {
-    label: orderMap[orderType.reimburse],
-    value: orderType.reimburse,
-  },
+  // {
+  //   label: orderMap[orderType.reimburse],
+  //   value: orderType.reimburse,
+  // },
 ]
 
 export enum couponTypeEnum {
@@ -66,4 +66,11 @@ export enum eventBusEnum {
   cartInit = 'cartInit',
   swapPage = 'swapPage',
   initData = 'initData',
+}
+
+export enum authorityEnum {
+  root = 1,
+  work,
+  nomal,
+  delivery,
 }
