@@ -1,11 +1,13 @@
-import { ScrollView, View } from '@tarojs/components'
+import { ScrollView, View, Button } from '@tarojs/components'
 import { FC, useState, useRef, useEffect, forwardRef } from 'react'
 import H5Nav from '@/components/nav-bar/h5-nav'
 import CartList from '@/components/cart-list'
 import Taro from '@tarojs/taro'
-import { findAllOrder } from '@/api/modules/order'
-import { orderList as orderListEnum } from '@/constant'
+import { findAllOrder, delOrder, payOrder } from '@/api/modules/order'
+import { orderList as orderListEnum, eventBusEnum } from '@/constant'
 import { inject, observer } from 'mobx-react'
+import Dialog from '@/components/dialog'
+import event from '@/utils/event'
 
 import styles from './index.module.scss'
 
@@ -33,25 +35,36 @@ type PageStateProps = {
   }
 }
 
+let cacheState = -1
+
 const OrderList: FC<PageStateProps> = forwardRef((props, _ref) => {
   const [orderList, setOrderList] = useState<any[]>([])
   const [isLoading, setIsloading] = useState(false)
   const [status, setStatus] = useState<number>(-1)
   const router = Taro.useRouter()
   const pageInfo = useRef<PageInfo>(defaultPageInfo())
+  const maskRef = useRef<any>(null)
+  const [realPrice, setRealPrice] = useState(0)
+  const orderId = useRef<number | undefined>(undefined)
 
   Taro.useReady(() => {
     const state = router.params.status ? Number(router.params.status) : 0
+    cacheState = state
     setStatus(state)
+    event.on(eventBusEnum.initData, () => {
+      setStatus(cacheState)
+      initData(true, cacheState)
+    })
   })
 
   useEffect(() => {
     if (status !== -1) {
+      cacheState = status
       initData(true)
     }
   }, [status])
 
-  const initData = async (clear = false) => {
+  const initData = async (clear = false, takeStatus?) => {
     try {
       if (clear) {
         pageInfo.current = defaultPageInfo()
@@ -59,7 +72,7 @@ const OrderList: FC<PageStateProps> = forwardRef((props, _ref) => {
       if (pageInfo.current.isMore) {
         setIsloading(true)
         const { data, total } = (await findAllOrder({
-          status,
+          status: takeStatus || status,
           pageIndex: pageInfo.current.pageIndex,
           pageSize: pageInfo.current.pageSize,
         })) as any
@@ -83,13 +96,68 @@ const OrderList: FC<PageStateProps> = forwardRef((props, _ref) => {
     }
   }
 
+  const orderHandle = (val, item) => {
+    switch (val) {
+      case '订单详情':
+        Taro.navigateTo({
+          url: 'pages/order-detail/index?id=' + item.id,
+        })
+        break
+      case '删除订单':
+        deleteOrder(item.id)
+        break
+      case '立即支付':
+        setRealPrice(item.realPrice)
+        orderId.current = item.id
+        maskRef.current.open()
+        break
+      default:
+        break
+    }
+  }
+
+  const paySubmit = async () => {
+    try {
+      await payOrder({
+        orderId: orderId.current,
+      })
+      Taro.showToast({
+        icon: 'none',
+        title: '支付成功',
+      })
+      maskRef.current.close()
+      initData(true)
+    } catch (error) {
+      Taro.showToast({
+        icon: 'none',
+        title: error,
+      })
+    }
+  }
+
+  const deleteOrder = async id => {
+    const { confirm } = await Taro.showModal({
+      content: '是否该订单删除',
+    })
+    if (confirm) {
+      await delOrder({
+        ids: [id],
+      })
+      initData(true)
+    }
+  }
+
+  const backHandle = () => {
+    event.off(eventBusEnum.initData)
+  }
+
   const onScrollToLower = () => {
     initData()
   }
 
   return (
     <View className="container">
-      <H5Nav title="订单列表" />
+      <H5Nav backHandle={backHandle} title="订单列表" />
       <View className={styles.nav}>
         <View
           onClick={() => {
@@ -122,12 +190,32 @@ const OrderList: FC<PageStateProps> = forwardRef((props, _ref) => {
         {orderList.map(item => {
           return (
             <View key={item.id} className={styles.order_list}>
-              <CartList orderItem={item} status={status} cardList={item.shopList} />
+              <CartList
+                orderHandle={val => {
+                  orderHandle(val, item)
+                }}
+                orderItem={item}
+                status={status}
+                cardList={item.shopList}
+              />
             </View>
           )
         })}
         {isLoading && <View className="shop_loading">加载中...</View>}
       </ScrollView>
+      <Dialog
+        maskWidth="70%"
+        title="微信支付"
+        ref={maskRef}
+        maskSlot={
+          <View className={styles.pay_content}>
+            <View className={styles.price}>￥{realPrice.toFixed(2)}</View>
+            <Button onClick={paySubmit} className={styles.btn} type="primary">
+              确定支付
+            </Button>
+          </View>
+        }
+      />
     </View>
   )
 })

@@ -9,7 +9,11 @@ export const sleep = time => {
 }
 
 export const formartDate = (date: Date | string, strType = 'YYYY-MM-DD') => {
-  return moment(date).format(strType)
+  try {
+    return moment(date).format(strType)
+  } catch {
+    return ''
+  }
 }
 
 export const isEmpty = (val: any) => {

@@ -1,0 +1,42 @@
+.order_page {
+  padding: 0 20px;
+  .card_box {
+    margin-top: 20px;
+  }
+  .order_box {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: white;
+    border-radius: 20px;
+    .title {
+      font-size: 34px;
+      font-weight: 700;
+    }
+    .order_item {
+      display: flex;
+      margin-top: 20px;
+      .label {
+        width: 200px;
+        font-size: 30px;
+      }
+      .value {
+        flex: 1;
+        font-size: 30px;
+      }
+    }
+  }
+  .btn_box {
+    margin-top: 40px;
+  }
+}
+.pay_content {
+  .price {
+    padding: 20px 0;
+    text-align: center;
+    font-size: 36px;
+  }
+  .btn {
+    width: 50%;
+    font-size: 30px;
+  }
+}

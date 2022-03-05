@@ -1,8 +1,8 @@
 import { View, Image, Block, Button } from '@tarojs/components'
 import { FC } from 'react'
 import { filePath } from '@/constant'
-import { toFiexd, isEmpty } from '@/utils'
-import { couponTypeEnum } from '@/constant'
+import { toFiexd } from '@/utils'
+import { couponTypeEnum, orderType } from '@/constant'
 
 import styles from './index.module.scss'
 
@@ -11,14 +11,19 @@ type PageStateProps = {
   changeCoupon?: (id: string | number, item: any) => void
   status?: number
   orderItem?: any
+  orderHandle?: (val: string) => void
 }
 
 const CartList: FC<PageStateProps> = props => {
-  const { cardList, changeCoupon, status, orderItem } = props
+  const { cardList, changeCoupon, status, orderItem, orderHandle } = props
 
   const selectCoupon = (e, shopStoreId, item) => {
     e.stopPropagation()
     changeCoupon && changeCoupon(shopStoreId, item)
+  }
+
+  const orderPage = val => {
+    orderHandle && orderHandle(val)
   }
 
   return (
@@ -101,11 +106,40 @@ const CartList: FC<PageStateProps> = props => {
                       <View className={styles.real}>实付款￥{orderItem.realPrice.toFixed(2)}</View>
                     )}
                   </View>
-                  <View className={styles.order_btn}>
-                    <Button plain className={styles.btn}>
-                      删除订单
-                    </Button>
-                  </View>
+                  {status !== -1 && (
+                    <View className={styles.order_btn}>
+                      <Button
+                        onClick={() => {
+                          orderPage('订单详情')
+                        }}
+                        plain
+                        className={styles.btn}
+                      >
+                        订单详情
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          orderPage('删除订单')
+                        }}
+                        plain
+                        className={styles.btn}
+                      >
+                        删除订单
+                      </Button>
+                      {orderItem.status === orderType.unpaid && (
+                        <Button
+                          onClick={() => {
+                            orderPage('立即支付')
+                          }}
+                          plain
+                          type="primary"
+                          className={styles.btn}
+                        >
+                          立即支付
+                        </Button>
+                      )}
+                    </View>
+                  )}
                 </Block>
               )}
             </View>

@@ -17,3 +17,13 @@ export const findAllOrder = data => {
     clearEmpty: true,
   })
 }
+
+export const delOrder = data => {
+  return request.Post('/order/delOrder', data, undefined, {
+    showLoading: true,
+  })
+}
+
+export const findOrder = data => {
+  return request.Get('/order/findOrder', data)
+}

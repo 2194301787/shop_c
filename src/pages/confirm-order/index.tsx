@@ -76,6 +76,7 @@ const ConfirmOrder: FC<PageStateProps> = forwardRef((props, _ref) => {
         title: '支付成功',
       })
       backPage()
+      maskRef.current.close()
       Taro.navigateBack({
         delta: 1,
       })
