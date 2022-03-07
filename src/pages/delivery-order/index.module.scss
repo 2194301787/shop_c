@@ -1,0 +1,27 @@
+.order_nav {
+  position: fixed;
+  width: 100%;
+  left: 0;
+  display: flex;
+  height: 88px;
+  align-items: center;
+  background-color: white;
+  z-index: 100;
+  .text {
+    flex: 1;
+    text-align: center;
+    font-size: 34px;
+  }
+  .active_text {
+    color: #dd7600;
+  }
+}
+.order_box {
+  padding: 0 20px;
+  box-sizing: border-box;
+  margin-top: 88px;
+  padding-bottom: 20px;
+  .order_list {
+    margin-top: 20px;
+  }
+}

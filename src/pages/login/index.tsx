@@ -1,5 +1,5 @@
-import { FC, forwardRef } from 'react'
-import { View, Form, Input, Button } from '@tarojs/components'
+import { FC, forwardRef, useState } from 'react'
+import { View, Form, Input, Button, InputProps } from '@tarojs/components'
 import H5Nav from '@/components/nav-bar/h5-nav'
 import { inject, observer } from 'mobx-react'
 import Taro from '@tarojs/taro'
@@ -14,6 +14,10 @@ type PageStateProps = {
 
 const Index: FC<PageStateProps> = forwardRef((props, _ref) => {
   const pages = Taro.getCurrentPages()
+  const [userInfo, setUserInfo] = useState({
+    username: '',
+    password: '',
+  })
 
   const reflash = () => {
     const some = Object.keys(event.callbacks).some(item => {
@@ -25,12 +29,28 @@ const Index: FC<PageStateProps> = forwardRef((props, _ref) => {
   }
 
   Taro.useReady(() => {
+    event.on(eventBusEnum.swapPage, user => {
+      setUserInfo({
+        username: user.username,
+        password: user.password,
+      })
+    })
     pages.forEach(item => {
       if (item.path.includes('pages/cart/index')) {
         reflash()
       }
     })
   })
+
+  const backHandle = () => {
+    event.off(eventBusEnum.swapPage)
+  }
+
+  const Register = () => {
+    Taro.navigateTo({
+      url: 'pages/register/index',
+    })
+  }
 
   const submit = async e => {
     try {
@@ -59,17 +79,25 @@ const Index: FC<PageStateProps> = forwardRef((props, _ref) => {
   }
   return (
     <View className={'container ' + styles.page}>
-      <H5Nav title="登录" />
+      <H5Nav backHandle={backHandle} title="登录" />
       <View className={styles.login}>
         <Form onSubmit={submit}>
           <View className={styles.login_input}>
-            <Input name="username" placeholder="请输入用户名或手机号" />
+            <Input value={userInfo.username} name="username" placeholder="请输入用户名或手机号" />
           </View>
           <View className={styles.login_input}>
-            <Input name="password" placeholder="请输入密码" />
+            <Input
+              value={userInfo.password}
+              type={'password' as unknown as undefined}
+              name="password"
+              placeholder="请输入密码"
+            />
           </View>
           <Button className={styles.btn} type="primary" formType="submit">
             登录
+          </Button>
+          <Button onClick={Register} type="warn" className={styles.btn}>
+            注册
           </Button>
         </Form>
       </View>

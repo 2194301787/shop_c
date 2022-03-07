@@ -27,3 +27,17 @@ export const delOrder = data => {
 export const findOrder = data => {
   return request.Get('/order/findOrder', data)
 }
+
+export const createDelivery = data => {
+  return request.Post('/order/createDelivery', data, undefined, {
+    showLoading: true,
+  })
+}
+
+export const findAllDelivery = data => {
+  return request.Post('/order/findAllDelivery', data)
+}
+
+export const completeDelivery = data => {
+  return request.Post('/order/completeDelivery', data)
+}

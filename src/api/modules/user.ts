@@ -24,3 +24,10 @@ export const updateUser = data => {
     showLoading: true,
   })
 }
+
+export const register = data => {
+  return request.Post('/user/register', data, undefined, {
+    showLoading: true,
+    clearEmpty: true,
+  })
+}

@@ -12,10 +12,13 @@ type PageStateProps = {
   status?: number
   orderItem?: any
   orderHandle?: (val: string) => void
+  state?: number
+  orderDelivery?: (type: number) => void
+  addressItem?: any
 }
 
 const CartList: FC<PageStateProps> = props => {
-  const { cardList, changeCoupon, status, orderItem, orderHandle } = props
+  const { cardList, changeCoupon, status, orderItem, orderHandle, state, orderDelivery, addressItem } = props
 
   const selectCoupon = (e, shopStoreId, item) => {
     e.stopPropagation()
@@ -24,6 +27,10 @@ const CartList: FC<PageStateProps> = props => {
 
   const orderPage = val => {
     orderHandle && orderHandle(val)
+  }
+
+  const delivery = (type: number) => {
+    orderDelivery && orderDelivery(type)
   }
 
   return (
@@ -51,7 +58,7 @@ const CartList: FC<PageStateProps> = props => {
                       />
                       <View className={styles.shop_content}>
                         <View className={styles.name}>{citem.name}</View>
-                        {citem.couponList && citem.couponList.length > 0 ? (
+                        {status !== -2 && citem.couponList && citem.couponList.length > 0 ? (
                           <View
                             onClick={e => {
                               selectCoupon(e, item.id, citem)
@@ -74,9 +81,9 @@ const CartList: FC<PageStateProps> = props => {
                         )}
                       </View>
                       <View className={styles.shop_tip}>
-                        <View className={styles.price}>￥{toFiexd(citem.price).toFixed(2)}</View>
+                        {status !== -2 && <View className={styles.price}>￥{toFiexd(citem.price).toFixed(2)}</View>}
                         <View className={styles.count}>x{citem.cardBuyCount}</View>
-                        {citem.couponList && citem.couponList.length > 0
+                        {citem.couponList && citem.couponList.length > 0 && status !== -2
                           ? citem.couponList.map(couponItem => {
                               return (
                                 <View key={'coupon' + couponItem.id} className={styles.discount}>
@@ -92,7 +99,7 @@ const CartList: FC<PageStateProps> = props => {
                   )
                 })}
               </View>
-              {!isNaN(Number(status)) && orderItem && (
+              {!isNaN(Number(status)) && status !== -2 && orderItem && (
                 <Block>
                   <View className={styles.order_box}>
                     <View
@@ -141,6 +148,45 @@ const CartList: FC<PageStateProps> = props => {
                     </View>
                   )}
                 </Block>
+              )}
+              {status === -2 && addressItem && (
+                <View className={styles.address}>
+                  配送信息：
+                  {addressItem.name +
+                    ',' +
+                    addressItem.phone +
+                    ' ' +
+                    addressItem.province +
+                    addressItem.city +
+                    addressItem.region +
+                    addressItem.content}
+                </View>
+              )}
+              {status === -2 && (
+                <View className={styles.order_btn}>
+                  {state === orderType.unship && (
+                    <Button
+                      onClick={() => {
+                        delivery(orderType.unship)
+                      }}
+                      plain
+                      className={styles.btn}
+                    >
+                      领取配送
+                    </Button>
+                  )}
+                  {state === orderType.unreceipt && (
+                    <Button
+                      onClick={() => {
+                        delivery(orderType.unreceipt)
+                      }}
+                      plain
+                      className={styles.btn}
+                    >
+                      配送完毕
+                    </Button>
+                  )}
+                </View>
               )}
             </View>
           )

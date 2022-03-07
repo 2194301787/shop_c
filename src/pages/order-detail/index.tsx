@@ -1,11 +1,11 @@
-import { Button, View } from '@tarojs/components'
+import { Block, Button, View, Image } from '@tarojs/components'
 import { FC, useState, useRef } from 'react'
 import H5Nav from '@/components/nav-bar/h5-nav'
 import CartList from '@/components/cart-list'
 import Taro from '@tarojs/taro'
 import { findOrder, payOrder } from '@/api/modules/order'
 import { formartDate } from '@/utils'
-import { orderMap, orderType, eventBusEnum } from '@/constant'
+import { orderMap, orderType, eventBusEnum, filePath } from '@/constant'
 import Dialog from '@/components/dialog'
 import event from '@/utils/event'
 
@@ -84,6 +84,24 @@ const OrderDetail: FC = () => {
             <View className={styles.label}>订单状态:</View>
             <View className={styles.value}>{orderMap[orderItem.status]}</View>
           </View>
+          {(orderItem.status === orderType.unreceipt || orderItem.status === orderType.completed) && (
+            <Block>
+              <View className={styles.order_item}>
+                <View className={styles.label}>配送人员:</View>
+                <View className={styles.value}>
+                  <Image
+                    className={styles.user_bg}
+                    src={process.env.fileUrl + filePath.myAvatar + '/' + orderItem.delivery.avatar}
+                  />
+                  <View className={styles.user_name}>{orderItem.delivery.username}</View>
+                </View>
+              </View>
+              <View className={styles.order_item}>
+                <View className={styles.label}>配送人电话:</View>
+                <View className={styles.value}>{orderItem.delivery.phone}</View>
+              </View>
+            </Block>
+          )}
         </View>
         {orderItem.status === orderType.unpaid && (
           <View className={styles.btn_box}>
