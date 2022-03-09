@@ -31,3 +31,7 @@ export const register = data => {
     clearEmpty: true,
   })
 }
+
+export const findAllMember = (data = undefined) => {
+  return request.Get('/user/findAllMember', data)
+}

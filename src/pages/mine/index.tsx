@@ -1,8 +1,9 @@
-import { FC, forwardRef } from 'react'
-import { View, Image, Block } from '@tarojs/components'
+import { FC, forwardRef, useState } from 'react'
+import { View, Image, Block, Progress, Text } from '@tarojs/components'
 import { inject, observer } from 'mobx-react'
 import { filePath, orderType, orderList, authorityEnum } from '@/constant'
 import Taro from '@tarojs/taro'
+import { toFiexd } from '@/utils'
 
 import handleIcon from '@/assets/images/handle.png'
 import rightIcon from '@/assets/images/right.png'
@@ -34,10 +35,37 @@ const Index: FC<PageStateProps> = forwardRef((props, _ref) => {
       user: { userInfo },
     },
   } = props
+  const [percent, setPercent] = useState(0)
+  const [differUp, setDifferUp] = useState(0)
 
   Taro.useDidShow(() => {
-    props.store.user.setUserInfo()
+    initData()
   })
+
+  const initData = async () => {
+    await props.store.user.setUserInfo()
+    const memberList = await props.store.user.getMember()
+    if (userInfo.member) {
+      for (let i = 0; i < memberList.length; i++) {
+        const item = memberList[i]
+        if (userInfo.member.level !== 9) {
+          if (userInfo.member.level + 1 === item.level) {
+            let up = toFiexd(item.growTotal - userInfo.growthValue)
+            setDifferUp(up)
+            setPercent(toFiexd((userInfo.growthValue / item.growTotal) * 100, 0))
+          }
+        } else {
+          setDifferUp(0)
+          setPercent(100)
+        }
+      }
+    } else {
+      const item = memberList[0]
+      let up = toFiexd(item.growTotal - userInfo.growthValue)
+      setDifferUp(up)
+      setPercent(toFiexd((userInfo.growthValue / item.growTotal) * 100, 0))
+    }
+  }
 
   const goLogin = () => {
     Taro.navigateTo({
@@ -74,12 +102,20 @@ const Index: FC<PageStateProps> = forwardRef((props, _ref) => {
       <View className={styles.user_box}>
         {userInfo ? (
           <View className={styles.user}>
-            <View className={styles.user_avatar}>
-              <Image src={process.env.fileUrl + filePath.myAvatar + '/' + userInfo.avatar}></Image>
-            </View>
+            <Image
+              className={styles.user_avatar}
+              src={process.env.fileUrl + filePath.myAvatar + '/' + userInfo.avatar}
+            ></Image>
+
             <View className={styles.user_info}>
               <View className={styles.name}>{userInfo.username}</View>
-              <View className={styles.level}>{userInfo.memberId ? 'VIP' + userInfo.member?.level : '非会员'}</View>
+              <View className={styles.level}>
+                {userInfo.memberId ? 'VIP' + userInfo.member?.level : '非会员'}
+                <Text className={styles.differUp}>还差{differUp}成长值升级</Text>
+              </View>
+              <View className={styles.progress}>
+                <Progress borderRadius={20} percent={percent} />
+              </View>
             </View>
           </View>
         ) : (

@@ -6,6 +6,7 @@
     .user {
       display: flex;
       .user_avatar {
+        display: block;
         width: 160px;
         height: 160px;
         border-radius: 50%;
@@ -23,6 +24,10 @@
         }
         .level {
           font-size: 30px;
+          .differUp {
+            font-size: 24px;
+            margin-left: 10px;
+          }
         }
       }
     }
