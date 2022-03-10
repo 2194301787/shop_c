@@ -1,4 +1,4 @@
-import { FC, useState, useEffect, forwardRef } from 'react'
+import { FC, useState, useEffect, forwardRef, useRef } from 'react'
 import { useDidShow, showToast, navigateTo, showModal, useReady } from '@tarojs/taro'
 import { View, Image, Input, Button, Block } from '@tarojs/components'
 import { findAllShopCard, delShopCard as delShopCardApi } from '@/api/modules/shop'
@@ -22,6 +22,7 @@ const Index: FC<PageStateProps> = forwardRef((props, _ref) => {
   const [allPrice, setAllPrice] = useState(0)
   const [isHandle, setIsHandle] = useState(false)
   const [isLogin, setIsLogin] = useState(true)
+  const isFrist = useRef(true)
 
   useReady(() => {
     event.once(eventBusEnum.cartInit, () => {
@@ -34,44 +35,37 @@ const Index: FC<PageStateProps> = forwardRef((props, _ref) => {
   })
 
   useEffect(() => {
-    if (isHandle === false) {
-      setcardList(list => {
-        const result: any[] = Object.assign([], list)
-        result.forEach(item => {
-          let count = 0
-          item.shopList.forEach(citem => {
-            if (citem.shopCount <= 0 && citem._isCheck) {
-              citem._isCheck = false
-            }
-            if (citem.shopCount > 0) {
-              count++
-            }
-          })
-          if (count <= 0 && item._isCheck) {
-            item._isCheck = false
-          }
-        })
-        return result
-      })
+    if (isFrist.current) {
+      isFrist.current = false
     } else {
-      setcardList(list => {
-        const result: any[] = Object.assign([], list)
-        result.forEach(item => {
-          item._isCheck = !item.shopList.some(citem => {
-            return !citem._isCheck
+      if (isHandle === false) {
+        setcardList(list => {
+          const result: any[] = Object.assign([], list)
+          result.forEach((item, index) => {
+            item.shopList.forEach(citem => {
+              if (citem.shopCount <= 0 && citem._isCheck) {
+                citem._isCheck = false
+              }
+            })
+            item._isCheck = !checkAllStore(result, index)
           })
+          isCheckAll(result)
+          return result
         })
-        isCheckAll(list)
-        return result
-      })
+      } else {
+        setcardList(list => {
+          const result: any[] = Object.assign([], list)
+          result.forEach(item => {
+            item._isCheck = !item.shopList.some(citem => {
+              return !citem._isCheck
+            })
+          })
+          isCheckAll(list)
+          return result
+        })
+      }
     }
   }, [isHandle])
-
-  useEffect(() => {
-    if (!isHandle) {
-      countPrice(cardList)
-    }
-  }, [cardList, isHandle])
 
   const onBuy = () => {
     if (allPrice <= 0) {
@@ -119,15 +113,17 @@ const Index: FC<PageStateProps> = forwardRef((props, _ref) => {
   }
 
   const countPrice = list => {
-    let price = 0
-    list.forEach(item => {
-      item.shopList.forEach(citem => {
-        if (citem._isCheck) {
-          price += citem.price * (citem.cardBuyCount < 0 ? 1 : citem.cardBuyCount)
-        }
+    if (!isHandle) {
+      let price = 0
+      list.forEach(item => {
+        item.shopList.forEach(citem => {
+          if (citem._isCheck) {
+            price += citem.price * (citem.cardBuyCount < 0 ? 1 : citem.cardBuyCount)
+          }
+        })
       })
-    })
-    setAllPrice(toFiexd(price))
+      setAllPrice(toFiexd(price))
+    }
   }
 
   const initData = async (diff = false) => {
@@ -165,11 +161,12 @@ const Index: FC<PageStateProps> = forwardRef((props, _ref) => {
           ...item,
         }
       })
-      setcardList(result)
+      countPrice(result)
       setAllNum(num)
+      setcardList(result)
     } catch (error) {
       setcardList([])
-      if (error.includes('jwt') && isLogin) {
+      if (typeof error === 'string' && error.includes('jwt') && isLogin) {
         navigateTo({
           url: 'pages/login/index',
         })
@@ -196,6 +193,7 @@ const Index: FC<PageStateProps> = forwardRef((props, _ref) => {
       }
       result[index]._isCheck = !checkAllStore(result, index)
       isCheckAll(result)
+      countPrice(result)
       return result
     })
   }
@@ -229,23 +227,20 @@ const Index: FC<PageStateProps> = forwardRef((props, _ref) => {
       })
       result[index]._isCheck = !checkAllStore(result, index)
       isCheckAll(result)
+      countPrice(result)
       return result
     })
   }
 
   const isCheckAll = list => {
     let bool = list.some(item => {
-      return (
-        !item._isCheck &&
-        item.shopList.some(citem => {
-          return !citem.isCheck
-        })
-      )
+      return !item._isCheck
     })
     setCheckAll(!bool)
   }
 
   const checkAllItem = () => {
+    setCheckAll(!checkAll)
     setcardList(list => {
       const result = list.map(item => {
         let count = 0
@@ -263,9 +258,9 @@ const Index: FC<PageStateProps> = forwardRef((props, _ref) => {
         }
         return item
       })
+      countPrice(result)
       return result
     })
-    setCheckAll(!checkAll)
   }
 
   const changeBuyCount = (e, index, cindex) => {
@@ -301,6 +296,7 @@ const Index: FC<PageStateProps> = forwardRef((props, _ref) => {
         result[index].shopList[cindex].cardBuyCount = 0
       }
       result[index].shopList[cindex]._inpEL = false
+      countPrice(result)
       return result
     })
   }

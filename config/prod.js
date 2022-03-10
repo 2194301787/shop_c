@@ -1,7 +1,7 @@
 module.exports = {
   env: {
     NODE_ENV: '"production"',
-    baseUrl: '"http://localhost:8888"',
+    baseUrl: '""',
     fileUrl: '"http://localhost:8888/upload"',
   },
   defineConstants: {},
