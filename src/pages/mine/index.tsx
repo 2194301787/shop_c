@@ -43,27 +43,29 @@ const Index: FC<PageStateProps> = forwardRef((props, _ref) => {
   })
 
   const initData = async () => {
-    await props.store.user.setUserInfo()
+    const user = await props.store.user.setUserInfo()
     const memberList = await props.store.user.getMember()
-    if (userInfo.member) {
-      for (let i = 0; i < memberList.length; i++) {
-        const item = memberList[i]
-        if (userInfo.member.level !== 9) {
-          if (userInfo.member.level + 1 === item.level) {
-            let up = toFiexd(item.growTotal - userInfo.growthValue)
-            setDifferUp(up)
-            setPercent(toFiexd((userInfo.growthValue / item.growTotal) * 100, 0))
+    if (user) {
+      if (user.member) {
+        for (let i = 0; i < memberList.length; i++) {
+          const item = memberList[i]
+          if (user.member.level !== 9) {
+            if (user.member.level + 1 === item.level) {
+              let up = toFiexd(item.growTotal - user.growthValue)
+              setDifferUp(up)
+              setPercent(toFiexd((user.growthValue / item.growTotal) * 100, 0))
+            }
+          } else {
+            setDifferUp(0)
+            setPercent(100)
           }
-        } else {
-          setDifferUp(0)
-          setPercent(100)
         }
+      } else {
+        const item = memberList[0]
+        let up = toFiexd(item.growTotal - user.growthValue)
+        setDifferUp(up)
+        setPercent(toFiexd((user.growthValue / item.growTotal) * 100, 0))
       }
-    } else {
-      const item = memberList[0]
-      let up = toFiexd(item.growTotal - userInfo.growthValue)
-      setDifferUp(up)
-      setPercent(toFiexd((userInfo.growthValue / item.growTotal) * 100, 0))
     }
   }
 

@@ -19,6 +19,7 @@ const user = observable({
   async setUserInfo() {
     const res = (await getUserInfo()) as any
     this.userInfo = res?.data
+    return this.userInfo
   },
   clearToken() {
     this.token = undefined
