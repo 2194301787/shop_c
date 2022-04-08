@@ -19,6 +19,7 @@ type PageStateProps = {
         sids: number[]
         max: number
         ids: number[]
+        price: number
       }
     }
   }
@@ -63,6 +64,13 @@ const TakeCoupon: FC<PageStateProps> = forwardRef((props, _ref) => {
       Taro.showToast({
         icon: 'none',
         title: '该优惠券活动时间还未开始',
+      })
+      return
+    }
+    if (list[index].meetCount > 0 && list[index].meetCount > props.store.config.pageParams.price) {
+      Taro.showToast({
+        icon: 'none',
+        title: `该商品需要达到${list[index].meetCount}元才能使用`,
       })
       return
     }

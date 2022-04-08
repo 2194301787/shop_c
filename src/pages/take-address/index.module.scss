@@ -1,5 +1,22 @@
 .address_list {
+  padding-bottom: 140px;
   .list {
     margin-top: 20px;
+  }
+}
+.footer {
+  position: fixed;
+  display: flex;
+  width: 100%;
+  height: 120px;
+  justify-content: center;
+  align-items: center;
+  left: 0;
+  bottom: 0;
+  background-color: white;
+  .btn {
+    width: 90%;
+    font-size: 34px;
+    border-radius: 40px;
   }
 }

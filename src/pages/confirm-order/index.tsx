@@ -196,6 +196,7 @@ const ConfirmOrder: FC<PageStateProps> = forwardRef((props, _ref) => {
       shopStoreId: storeId,
       sids: couponIds,
       max: item.cardBuyCount,
+      price: item.price,
     }
     if (couponObj.current[item.id]) {
       obj.ids = couponObj.current[item.id]
