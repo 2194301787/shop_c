@@ -77,12 +77,14 @@ const Index: FC<PageStateProps> = forwardRef((props, _ref) => {
     }
     const cards: any[] = JSON.parse(JSON.stringify(cardList))
     const list: any[] = []
+    let cardId: any = []
     let num = 0
     cards.forEach(item => {
       const itemList = item.shopList.filter(citem => {
         return citem._isCheck
       })
       if (itemList.length > 0) {
+        cardId.push(...itemList.map(shopItem => shopItem.cardId))
         delete item._isCheck
         list.push({
           ...item,
@@ -108,7 +110,7 @@ const Index: FC<PageStateProps> = forwardRef((props, _ref) => {
       num,
     })
     navigateTo({
-      url: 'pages/confirm-order/index',
+      url: 'pages/confirm-order/index?ids=' + cardId.join(','),
     })
   }
 

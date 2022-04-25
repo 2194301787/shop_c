@@ -12,6 +12,7 @@ import CartList from '@/components/cart-list'
 import { toFiexd, isEmpty } from '@/utils'
 import Dialog from '@/components/dialog'
 import { createOrder, payOrder } from '@/api/modules/order'
+import { delShopCard } from '@/api/modules/shop'
 
 import styles from './index.module.scss'
 
@@ -26,6 +27,9 @@ type PageStateProps = {
 }
 
 const ConfirmOrder: FC<PageStateProps> = forwardRef((props, _ref) => {
+  const {
+    params: { ids },
+  } = Taro.useRouter()
   const [address, setAddress] = useState<any>(undefined)
   const [cartList, setCartList] = useState<any[]>([])
   const [realPrice, setRealPrice] = useState(0)
@@ -71,6 +75,11 @@ const ConfirmOrder: FC<PageStateProps> = forwardRef((props, _ref) => {
       await payOrder({
         orderId: orderId.current,
       })
+      if (ids) {
+        await delShopCard({
+          ids: ids?.split(','),
+        })
+      }
       Taro.showToast({
         icon: 'none',
         title: '支付成功',
