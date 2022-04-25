@@ -2,7 +2,7 @@ import { FC, useState, useRef, useEffect } from 'react'
 import { View, ScrollView, Image } from '@tarojs/components'
 import NavList from '@/components/navigation/nav-list'
 import { shopTypeMap, shopTypeList, filePath } from '@/constant'
-import { navigateTo, pxTransform } from '@tarojs/taro'
+import { navigateTo, pxTransform, useDidShow } from '@tarojs/taro'
 import { findTypeShop } from '@/api/modules/shop'
 import { sleep } from '@/utils'
 
@@ -20,10 +20,24 @@ shopTypeList.forEach(item => {
 })
 
 const Index: FC = () => {
-  const [pageData, setPageData] = useState(pageObj)
+  const [pageData, setPageData] = useState(JSON.parse(JSON.stringify(pageObj)))
   const [current, setCurrent] = useState(0)
   const navRef = useRef<any>(null)
   const [isLoading, setIsloading] = useState(false)
+  const pageFrist = useRef(false)
+  const isFlash = useRef(false)
+
+  useDidShow(() => {
+    isFlash.current = true
+    setPageData(JSON.parse(JSON.stringify(pageObj)))
+  })
+
+  useEffect(() => {
+    if (isFlash.current) {
+      isFlash.current = false
+      initData()
+    }
+  }, [pageData])
 
   const initData = async () => {
     const shopKey = shopTypeList[current]
@@ -63,7 +77,11 @@ const Index: FC = () => {
   }
 
   useEffect(() => {
-    initData()
+    if (pageFrist.current) {
+      initData()
+    } else {
+      pageFrist.current = true
+    }
   }, [current])
 
   const onScrollToLower = () => {
