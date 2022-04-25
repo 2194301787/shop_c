@@ -11,7 +11,7 @@ const App: FC = props => {
       success(res) {
         let statusH = 44
         let topH = 0
-        if (res.statusBarHeight !== NaN && res.statusBarHeight !== 0) {
+        if (!isNaN(res.statusBarHeight)) {
           topH = res.statusBarHeight
         }
         if (res.platform === 'ios') {
