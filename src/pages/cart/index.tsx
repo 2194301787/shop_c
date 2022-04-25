@@ -168,6 +168,7 @@ const Index: FC<PageStateProps> = forwardRef((props, _ref) => {
       setcardList(result)
     } catch (error) {
       setcardList([])
+      setAllNum(0)
       if (typeof error === 'string' && error.includes('jwt') && isLogin) {
         navigateTo({
           url: 'pages/login/index',

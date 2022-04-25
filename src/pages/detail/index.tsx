@@ -31,6 +31,12 @@ const Detail: FC<PageStateProps> = forwardRef((props, _ref) => {
   })
 
   const submit = () => {
+    if (!props.store.user.userInfo) {
+      navigateTo({
+        url: 'pages/login/index',
+      })
+      return
+    }
     if (shopItem.shopCount <= 0) {
       showToast({
         icon: 'none',
